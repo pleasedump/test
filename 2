@@ -1,0 +1,210 @@
+Below is a complete Kotlin code implementation for an Android app using the components and functionalities you requested. This includes displaying entered data in the next activity and adding a phone icon to redirect users to the dialer.
+
+### MainActivity.kt (First Activity)
+
+```kotlin
+package com.example.intentsandwidgets
+
+import android.content.Intent
+import android.net.Uri
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.EditText
+import android.widget.RadioButton
+import android.widget.Spinner
+import android.widget.Switch
+
+class MainActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        val editText = findViewById<EditText>(R.id.editText)
+        val checkBox = findViewById<CheckBox>(R.id.checkBox)
+        val radioButton1 = findViewById<RadioButton>(R.id.radioButton1)
+        val radioButton2 = findViewById<RadioButton>(R.id.radioButton2)
+        val spinner = findViewById<Spinner>(R.id.spinner)
+        val switch = findViewById<Switch>(R.id.switch1)
+        val button = findViewById<Button>(R.id.button)
+        val phoneButton = findViewById<Button>(R.id.phoneButton)
+
+        // Set up button click to pass data to the next activity
+        button.setOnClickListener {
+            val enteredText = editText.text.toString()
+            val isCheckBoxChecked = checkBox.isChecked
+            val selectedRadioButtonText = if (radioButton1.isChecked) "Option 1" else if (radioButton2.isChecked) "Option 2" else "None"
+            val selectedSpinnerItem = spinner.selectedItem.toString()
+            val isSwitchOn = switch.isChecked
+
+            val intent = Intent(this, DisplayActivity::class.java).apply {
+                putExtra("enteredText", enteredText)
+                putExtra("isCheckBoxChecked", isCheckBoxChecked)
+                putExtra("selectedRadioButtonText", selectedRadioButtonText)
+                putExtra("selectedSpinnerItem", selectedSpinnerItem)
+                putExtra("isSwitchOn", isSwitchOn)
+            }
+            startActivity(intent)
+        }
+
+        // Set up phone button to open dialer with a preset number
+        phoneButton.setOnClickListener {
+            val phoneNumber = "1234567890" // Replace with actual number
+            val dialIntent = Intent(Intent.ACTION_DIAL).apply {
+                data = Uri.parse("tel:$phoneNumber")
+            }
+            startActivity(dialIntent)
+        }
+    }
+}
+```
+
+### DisplayActivity.kt (Second Activity)
+
+This activity receives the data and displays it.
+
+```kotlin
+package com.example.intentsandwidgets
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.widget.TextView
+
+class DisplayActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_display)
+
+        val enteredText = intent.getStringExtra("enteredText")
+        val isCheckBoxChecked = intent.getBooleanExtra("isCheckBoxChecked", false)
+        val selectedRadioButtonText = intent.getStringExtra("selectedRadioButtonText")
+        val selectedSpinnerItem = intent.getStringExtra("selectedSpinnerItem")
+        val isSwitchOn = intent.getBooleanExtra("isSwitchOn", false)
+
+        val displayTextView = findViewById<TextView>(R.id.displayTextView)
+        displayTextView.text = """
+            Entered Text: $enteredText
+            CheckBox Checked: $isCheckBoxChecked
+            Selected RadioButton: $selectedRadioButtonText
+            Selected Spinner Item: $selectedSpinnerItem
+            Switch is On: $isSwitchOn
+        """.trimIndent()
+    }
+}
+```
+
+### activity_main.xml (Layout for MainActivity)
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter text here" />
+
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Check Box" />
+
+    <RadioButton
+        android:id="@+id/radioButton1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Option 1" />
+
+    <RadioButton
+        android:id="@+id/radioButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Option 2" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/spinner_items" />
+
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Switch" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Submit" />
+
+    <Button
+        android:id="@+id/phoneButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Call" />
+</LinearLayout>
+```
+
+### activity_display.xml (Layout for DisplayActivity)
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/displayTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp" />
+</LinearLayout>
+```
+
+### strings.xml
+
+Add items for the spinner in `res/values/strings.xml`:
+
+```xml
+<resources>
+    <string name="app_name">Intents and Widgets</string>
+    <string-array name="spinner_items">
+        <item>Item 1</item>
+        <item>Item 2</item>
+        <item>Item 3</item>
+    </string-array>
+</resources>
+```
+
+### AndroidManifest.xml
+
+Declare both activities in your manifest file.
+
+```xml
+<application>
+    <activity android:name=".MainActivity">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
+    <activity android:name=".DisplayActivity"/>
+</application>
+```
+
+This code creates a simple two-activity app with various widgets and an intent to display the inputted data in the next activity. It includes a phone button to open the dialer with a specified number. Let me know if you need further customization or have questions!
