@@ -1462,4 +1462,250 @@ To be added in Manifest
 <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
 <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
+
+Ex – 10: Swiping
+Here’s the complete code for your Android app using `TabLayout` and `ViewPager2` to create a 3-tab swipeable layout. Each tab will display a different fragment: List of Products, Shop Details, and Offers.
+
+### 1. `build.gradle` (Module: app)
+Add the necessary dependencies for `TabLayout` and `ViewPager2`.
+
+```gradle
+dependencies {
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.viewpager2:viewpager2:1.0.0'
+}
+```
+
+### 2. `activity_main.xml`
+Create the main layout for `TabLayout` and `ViewPager2`.
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>
+```
+
+### 3. Fragment Layouts
+Create separate layouts for each fragment.
+
+#### `fragment_products.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="List of Products"
+        android:textSize="18sp" />
+</LinearLayout>
+```
+
+#### `fragment_shop_details.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Shop Details"
+        android:textSize="18sp" />
+</LinearLayout>
+```
+
+#### `fragment_offers.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Offers"
+        android:textSize="18sp" />
+</LinearLayout>
+```
+
+### 4. Fragment Classes
+Create a separate fragment class for each tab.
+
+#### `ProductsFragment.java`
+```java
+package com.example.yourapp;
+
+import android.os.Bundle;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+public class ProductsFragment extends Fragment {
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_products, container, false);
+    }
+}
+```
+
+#### `ShopDetailsFragment.java`
+```java
+package com.example.yourapp;
+
+import android.os.Bundle;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+public class ShopDetailsFragment extends Fragment {
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_shop_details, container, false);
+    }
+}
+```
+
+#### `OffersFragment.java`
+```java
+package com.example.yourapp;
+
+import android.os.Bundle;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+public class OffersFragment extends Fragment {
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_offers, container, false);
+    }
+}
+```
+
+### 5. ViewPagerAdapter
+Create an adapter to manage the fragments in `ViewPager2`.
+
+#### `ViewPagerAdapter.java`
+```java
+package com.example.yourapp;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+
+public class ViewPagerAdapter extends FragmentStateAdapter {
+
+    public ViewPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
+        super(fragmentActivity);
+    }
+
+    @NonNull
+    @Override
+    public Fragment createFragment(int position) {
+        switch (position) {
+            case 0:
+                return new ProductsFragment();
+            case 1:
+                return new ShopDetailsFragment();
+            case 2:
+                return new OffersFragment();
+            default:
+                return new ProductsFragment();
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return 3;
+    }
+}
+```
+
+### 6. MainActivity
+In `MainActivity.java`, set up the `TabLayout` and `ViewPager2`.
+
+#### `MainActivity.java`
+```java
+package com.example.yourapp;
+
+import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        TabLayout tabLayout = findViewById(R.id.tab_layout);
+        ViewPager2 viewPager = findViewById(R.id.view_pager);
+
+        ViewPagerAdapter adapter = new ViewPagerAdapter(this);
+        viewPager.setAdapter(adapter);
+
+        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
+            switch (position) {
+                case 0:
+                    tab.setText("Products");
+                    break;
+                case 1:
+                    tab.setText("Shop Details");
+                    break;
+                case 2:
+                    tab.setText("Offers");
+                    break;
+            }
+        }).attach();
+    }
+}
+```
+
+### Summary
+This code creates a 3-tab swipeable layout with `TabLayout` and `ViewPager2`, where each tab displays a different fragment (List of Products, Shop Details, and Offers). Each fragment can be customized further to add specific content or functionality for your app.
+
 
