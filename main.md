@@ -1682,4 +1682,142 @@ class MainActivity : AppCompatActivity() {
 ### Summary
 This code creates a 3-tab swipeable layout with `TabLayout` and `ViewPager2`, where each tab displays a different fragment (Products, Shop Details, and Offers). Each fragment can be customized further to add specific content or functionality for your app.
 
+
+Time picker
+Here’s a basic implementation of an appointment scheduling app in Android using Kotlin. It includes a `DatePicker`, a `TimePicker`, and a `Button` to confirm and display the selected date and time.
+
+### 1. Set Up the MainActivity Layout (XML)
+
+```xml
+<!-- res/layout/activity_main.xml -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/selectedDateTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No appointment selected"
+        android:textSize="18sp"
+        android:padding="8dp"/>
+
+    <Button
+        android:id="@+id/selectDateButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Date" />
+
+    <Button
+        android:id="@+id/selectTimeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Time"
+        android:layout_marginTop="8dp"/>
+
+    <Button
+        android:id="@+id/confirmButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Confirm Appointment"
+        android:layout_marginTop="16dp"/>
+</LinearLayout>
+```
+
+### 2. Implement MainActivity in Kotlin
+
+```kotlin
+// MainActivity.kt
+package com.example.appointmentscheduler
+
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import android.os.Bundle
+import android.widget.Button
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import java.util.*
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var selectedDateTimeTextView: TextView
+    private var selectedDate: String = ""
+    private var selectedTime: String = ""
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        selectedDateTimeTextView = findViewById(R.id.selectedDateTime)
+        val selectDateButton: Button = findViewById(R.id.selectDateButton)
+        val selectTimeButton: Button = findViewById(R.id.selectTimeButton)
+        val confirmButton: Button = findViewById(R.id.confirmButton)
+
+        selectDateButton.setOnClickListener {
+            openDatePicker()
+        }
+
+        selectTimeButton.setOnClickListener {
+            openTimePicker()
+        }
+
+        confirmButton.setOnClickListener {
+            confirmAppointment()
+        }
+    }
+
+    private fun openDatePicker() {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = DatePickerDialog(
+            this,
+            { _, selectedYear, selectedMonth, selectedDay ->
+                selectedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+                selectedDateTimeTextView.text = "Date selected: $selectedDate"
+            }, year, month, day
+        )
+        datePickerDialog.show()
+    }
+
+    private fun openTimePicker() {
+        val calendar = Calendar.getInstance()
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
+
+        val timePickerDialog = TimePickerDialog(
+            this,
+            { _, selectedHour, selectedMinute ->
+                selectedTime = String.format("%02d:%02d", selectedHour, selectedMinute)
+                selectedDateTimeTextView.text = "Time selected: $selectedTime"
+            }, hour, minute, true
+        )
+        timePickerDialog.show()
+    }
+
+    private fun confirmAppointment() {
+        if (selectedDate.isNotEmpty() && selectedTime.isNotEmpty()) {
+            selectedDateTimeTextView.text = "Appointment confirmed on $selectedDate at $selectedTime"
+        } else {
+            selectedDateTimeTextView.text = "Please select both date and time"
+        }
+    }
+}
+```
+
+### Explanation
+
+1. **DatePickerDialog**: When the user clicks "Select Date," a date picker dialog appears. After the user selects a date, it's stored and displayed.
+
+2. **TimePickerDialog**: When the user clicks "Select Time," a time picker dialog appears. After the user selects a time, it's stored and displayed.
+
+3. **Confirm Button**: When the user clicks "Confirm Appointment," it displays the selected date and time. If both are not selected, it prompts the user to select both.
+
+This app provides a simple interface for scheduling appointments, using a `DatePicker` and `TimePicker` and displaying the confirmation message.
+
 
